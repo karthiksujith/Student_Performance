@@ -12,19 +12,19 @@ df=pd.read_csv('data/student.csv',sep=';')
 
 print(df.head())
 
-print('shape:',df.shape)
+print('\nshape:\n',df.shape)
 
-print('columns:',df.columns)
+print('\ncolumns:\n',df.columns)
 
 df.info()
 
-print('null values:',df.isnull().sum())
+print('\nnull values:\n',df.isnull().sum())
 
-print('duplicated rows:',df.duplicated().sum())
+print('\nduplicated rows:\n',df.duplicated().sum())
 
-print('G3 value counts:',df['G3'].value_counts().sort_index())
+print('\nG3 value counts:\n',df['G3'].value_counts().sort_index())
 
-print('statistics:',df.describe())
+print('\nstatistics:\n',df.describe())
 
 
 plt.figure(figsize=(10,5))
@@ -40,7 +40,7 @@ df['performance'] = df['G3'].apply(
     lambda grade: 'Pass' if grade >= 10 else 'At Risk'
 )
 
-print('performance distribution:',df['performance'].value_counts())
+print('\nperformance distribution:\n',df['performance'].value_counts())
 
 FEATURES=[
     'studytime',
@@ -58,9 +58,9 @@ FEATURES=[
 X=df[FEATURES]
 y=df['performance']
 
-print('Features(X):',X.columns.to_list())
-print('no of features:',X.shape[1])
-print('Target(y):',y.head())
+print('\nFeatures(X):\n',X.columns.to_list())
+print('\nno of features:\n',X.shape[1])
+print('\nTarget(y):\n',y.head())
 
 
 numerical_features = X.select_dtypes(
@@ -71,17 +71,17 @@ categorical_features = X.select_dtypes(
     include=['object','category','str']
 ).columns
 
-print('Numerical features:',list(numerical_features))
+print('\nNumerical features:\n',list(numerical_features))
 
-print('Categorical features:',list(categorical_features))
+print('\nCategorical features:\n',list(categorical_features))
 
 
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42,stratify=y)
 
-print('Training data shape:',X_train.shape)
-print('Test data shape:',X_test.shape)
-print('Training target:',y_train.value_counts())
-print('Test target:',y_test.value_counts())
+print('\nTraining data shape:\n',X_train.shape)
+print('\nTest data shape:\n',X_test.shape)
+print('\nTraining target:\n',y_train.value_counts())
+print('\nTest target:\n',y_test.value_counts())
 
 
 preprocessor=ColumnTransformer(
@@ -90,7 +90,7 @@ preprocessor=ColumnTransformer(
         ('categorical',OneHotEncoder(handle_unknown='ignore'),categorical_features)
     ]
 )
-print('preprocessor created successfully')
+print('\npreprocessor created successfully')
 
 model=Pipeline([
     ('preprocessor',preprocessor),
@@ -98,7 +98,7 @@ model=Pipeline([
 ])
 
 model.fit(X_train,y_train)
-print('Model trained successfully')
+print('\nModel trained successfully')
 
 pred=model.predict(X_test)
 acc=accuracy_score(y_test,pred)
@@ -107,12 +107,12 @@ f1=f1_score(y_test,pred,pos_label='At Risk')
 report=classification_report(y_test,pred)
 cm=confusion_matrix(y_test,pred,labels=['At Risk','Pass'])
 
-print('Predictions:',pred[:10])
-print('Accuracy:',acc)
-print('recall:',recall)
-print('f1:',f1)
-print('classification_report:',report)
-print('cm:\n',cm)
+print('\nPredictions:\n',pred[:10])
+print('\nAccuracy:\n',acc)
+print('\nrecall:\n',recall)
+print('\nf1:\n',f1)
+print('\nclassification_report:\n',report)
+print('\ncm:\n',cm)
 
 joblib.dump(model, 'models/student_performance_model.pkl')
-print('Model saved successfully!')
+print('\nModel saved successfully!')
